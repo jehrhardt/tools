@@ -1,8 +1,17 @@
-# Vibes
+# tools
 
-Vibes from a Cozy Craft Coder.
+Miscellaneous Python tools to automate everyday tasks.
 
-This project provides helpful tools for everyday development tasks that have been automated with vibe coding ✨.
+Inspired by this quote from [Simon Willison](https://simonwillison.net):
+
+> "*This* is why I care so much about the productivity boost I get from LLMs so much: it’s not about getting work done faster, it’s about being able to ship projects that I wouldn’t have been able to justify spending time on at all."
+
+### Why Python is the right tool for the job?
+
+* Python is a nice scripting language that is easy to learn and read.
+* Due to its popularity, LLMs are good at writing Python code.
+* It is also a powerful language with a huge ecosystem of libraries for all kinds of tasks.
+* Lastly, [uv](https://github.com/astral-sh/uv) has made Python a breeze to work with.
 
 ## Setup
 
@@ -10,8 +19,15 @@ This project uses [uv](https://github.com/astral-sh/uv) for managing Python depe
 
 ### Prerequisites
 
-- [uv](https://github.com/astral-sh/uv) installed
-- Git
+Install [uv](https://github.com/astral-sh/uv) by running:
+
+```bash
+# macOS
+brew install uv
+
+# Arch Linux
+sudo pacman -S uv
+```
 
 ## Available Scripts
 
@@ -49,7 +65,3 @@ This command will:
 
 - `gh_work.py` - GitHub workflow utilities
 - `help.py` - Help system for displaying information about modules
-
-## License
-
-[Apache License 2.0](https://opensource.org/licenses/Apache-2.0)
