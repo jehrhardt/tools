@@ -22,11 +22,11 @@ This project uses [uv](https://github.com/astral-sh/uv) for managing Python depe
 Install [uv](https://github.com/astral-sh/uv) by running:
 
 ```bash
-# macOS
-brew install uv
-
 # Arch Linux
 sudo pacman -S uv
+
+# macOS
+brew install uv
 ```
 
 ## Available Scripts
