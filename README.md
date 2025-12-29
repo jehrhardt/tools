@@ -1,6 +1,6 @@
 # tools
 
-Miscellaneous Python tools to automate everyday tasks.
+Miscellaneous Python tools to automate everyday tasks and experiment with ideas.
 
 Inspired by this quote from [Simon Willison](https://simonwillison.net):
 
@@ -11,8 +11,7 @@ Inspired by this quote from [Simon Willison](https://simonwillison.net):
 ## Why Python is the right tool for the job?
 
 * Python is a nice scripting language that is easy to learn and read.
-* Due to its popularity, LLMs are good at writing Python code.
-* It is also a powerful language with a huge ecosystem of libraries for all
+* It is a powerful language with a huge ecosystem of libraries for all
   kinds of tasks.
 * Lastly, [uv](https://github.com/astral-sh/uv) has made Python a breeze to
   work with.
@@ -20,8 +19,6 @@ Inspired by this quote from [Simon Willison](https://simonwillison.net):
 ## Install
 
 This project uses [uv](https://github.com/astral-sh/uv) for running scripts.
-
-Clone the repo to `~/.local/tools`. Add aliases to your shell (see my [dotfiles](https://tangled.org/@jehrhardt.dev/dotfiles/commit/37773bd27db997e25aa6057679fc5a4a1742912e)).
 
 ## Usage
 
@@ -44,22 +41,22 @@ Manage fingerprint authentication on Arch Linux.
 
 **Requirements:**
 
-* `fprintd` package must be installed: `sudo pacman -S fprintd`
+* `fprintd` package must be installed: `paru -S fprintd`
 
 **Example:**
 
 ```bash
 # Initial setup
-uv run fingerprint.py init
+uv run --script fingerprint.py init
 
 # Add a fingerprint
-uv run fingerprint.py add
+uv run --script fingerprint.py add
 
 # Remove fingerprints (keeping PAM config)
-uv run fingerprint.py remove
+uv run --script fingerprint.py remove
 
 # Remove fingerprints and PAM config
-uv run fingerprint.py remove --pam
+uv run --script fingerprint.py remove --pam
 ```
 
 ## Environment Variables

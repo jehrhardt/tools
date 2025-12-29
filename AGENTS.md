@@ -1,84 +1,251 @@
-# CLAUDE.md
+# Agent Guidelines for tools Repository
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This document provides essential information for AI coding agents working in this repository.
 
-## Overview
+## Project Overview
 
-This is a repository for miscellaneous Python tools to automate everyday tasks. The project uses [uv](https://github.com/astral-sh/uv) for running Python scripts without traditional package management overhead.
+This is a collection of miscellaneous Python tools designed to automate everyday tasks and experiment with ideas. Each tool is a standalone Python script that uses `uv` for dependency management and execution.
 
-## Key Philosophy
+**Philosophy**: Ship small, useful projects that wouldn't normally justify the time investment - enabled by LLM productivity boost.
 
-The repository follows Simon Willison's principle: LLM productivity boost is about shipping projects that wouldn't justify the time investment otherwise. Scripts here should be practical automation tools that solve real everyday problems.
+## Technology Stack
 
-## Environment Management
+- **Language**: Python 3.14+
+- **Package Manager**: [uv](https://github.com/astral-sh/uv)
+- **CLI Framework**: [typer](https://typer.tiangolo.com/) for command-line interfaces
+- **Script Format**: PEP 723 inline script metadata
+- **Platform**: Linux (Arch Linux specific for some tools like fingerprint.py)
 
-- Uses [mise](https://mise.jdx.dev/) for environment variable management
-- Environment variables are loaded from `.env` file (configured in `mise.toml`)
-- The `.env` file is gitignored and should contain any necessary API keys or secrets
+## Build/Run/Test Commands
 
-## Running Scripts
-
-Scripts are intended to be run with `uv run`. For example:
-
-```bash
-uv run script_name.py
-```
-
-Users are encouraged to set up shell aliases for frequently used scripts.
-
-## Creating Scripts
-
-Scripts are created using `uv init --script`. For example:
+### Running Scripts
 
 ```bash
-uv init --script script_name.py --python 3.13
+# Run a script directly (uv handles dependencies automatically)
+uv run fingerprint.py <command>
+
+# Run with specific arguments
+uv run --script fingerprint.py init
+uv run --script fingerprint.py add
+uv run --script fingerprint.py remove --pam
 ```
 
-This creates a Python script with PEP 723 inline metadata (dependencies declared in a comment block at the top). Scripts should:
+### Development
 
-- Not be executable with shebang
-- Use Typer for CLI with `--help` flag
-- Have docstrings explaining their purpose
+```bash
+# No build step required - scripts are standalone
 
-Example structure:
+# Format code (if ruff or black is added in the future)
+# Currently no formatter configured
+
+# Type checking (if mypy is added in the future)
+# Currently no type checker configured
+
+# Run a single test (once tests are added)
+# pytest tests/test_fingerprint.py::test_specific_function
+```
+
+### Testing
+
+**Current State**: No test framework currently configured.
+
+**When Adding Tests**: Use pytest with the following structure:
+
+```bash
+# Run all tests
+pytest
+
+# Run specific test file
+pytest tests/test_fingerprint.py
+
+# Run specific test function
+pytest tests/test_fingerprint.py::test_init_command
+
+# Run with coverage
+pytest --cov=. --cov-report=html
+```
+
+## Code Style Guidelines
+
+### Script Structure
+
+Every new tool should be a standalone executable Python script following this template:
 
 ```python
 #!/usr/bin/env -S uv run
 # /// script
-# requires-python = ">=3.13"
-# dependencies = ["typer"]
+# requires-python = ">=3.14"
+# dependencies = [
+#     "typer",
+#     # Add other dependencies here
+# ]
 # ///
 
-"""Brief description of what the script does."""
+"""Brief description of what this tool does."""
+
+import os
+import subprocess
+from pathlib import Path
 
 import typer
-app = typer.Typer(help="Command description")
 
-@app.command()
-def main():
-    """Command help text."""
-    pass
+app = typer.Typer(help="Tool description")
+
+# Your code here
 
 if __name__ == "__main__":
     app()
 ```
 
-## Adding Dependencies
+### Imports
 
-Dependencies are added to individual scripts with `uv add`. For example:
+**Order**: Standard library imports first, then third-party imports, separated by a blank line.
 
-```bash
-uv add --script script_name.py 'requests'
+```python
+# Standard library
+import os
+import shutil
+import subprocess
+from pathlib import Path
+import tempfile
+
+# Third-party
+import typer
 ```
 
-## Existing Tools
+**Style**:
 
-### fingerprint.py
+- Use absolute imports
+- Avoid wildcard imports (`from module import *`)
+- Group related imports together
 
-Manages fingerprint authentication on Arch Linux systems using `fprintd`. Provides commands to:
+### Formatting
 
-- `init` - Configure PAM for fingerprint authentication (modifies `/etc/pam.d/sudo` and `/etc/pam.d/polkit-1`)
-- `add` - Enroll fingerprints for the current user
-- `remove` - Delete fingerprints (with optional `--pam` flag to also remove PAM config)
+- **Indentation**: 4 spaces (no tabs)
+- **Line Length**: Keep lines reasonable (≤88 characters preferred, but not strict)
+- **Quotes**: Double quotes for strings (as seen in `fingerprint.py`)
+- **Blank Lines**: 2 blank lines between top-level functions/classes
 
-**System-specific:** Arch Linux only. Requires `fprintd` package.
+### Types
+
+- **Python Version**: Target Python 3.14+ (use modern Python features)
+- **Type Hints**: Not currently enforced, but welcome for clarity
+- **When to use**: Add type hints for function signatures when it improves readability
+
+### Naming Conventions
+
+- **Files**: Lowercase with underscores (e.g., `fingerprint.py`)
+- **Functions**: Lowercase with underscores (e.g., `check_requirements()`, `write_privileged()`)
+- **Variables**: Lowercase with underscores (e.g., `username`, `tmp_path`)
+- **Constants**: Uppercase with underscores (e.g., `PAM_FPRINTD_LINE`, `PAM_SUDO_PATH`)
+- **Classes**: PascalCase (when needed)
+
+### Error Handling
+
+**Pattern**: Use try-except blocks for expected failures, provide helpful error messages.
+
+```python
+try:
+    subprocess.run(["some-command"], check=True)
+    typer.secho("Success message!", fg=typer.colors.GREEN)
+except subprocess.CalledProcessError as e:
+    typer.secho(f"Failed: {e}", fg=typer.colors.RED, err=True)
+    raise typer.Exit(1)
+except PermissionError as e:
+    typer.secho(f"Permission denied: {e}", fg=typer.colors.RED, err=True)
+    raise typer.Exit(1)
+```
+
+**Best Practices**:
+
+- Catch specific exceptions (avoid bare `except:`)
+- Always provide context in error messages
+- Use `typer.secho()` with colors for user feedback (GREEN for success, RED for errors, YELLOW for warnings)
+- Exit with non-zero status on errors (`raise typer.Exit(1)`)
+- Write errors to stderr using `err=True`
+- Handle `KeyboardInterrupt` gracefully for interactive commands
+
+### CLI Commands
+
+Use typer decorators for commands:
+
+```python
+@app.command()
+def command_name(
+    option: bool = typer.Option(False, "--flag", help="Description"),
+):
+    """Command description shown in help."""
+    pass
+```
+
+**Guidelines**:
+
+- Provide clear help text for all commands and options
+- Use `typer.confirm()` for destructive operations
+- Provide progress feedback with `typer.secho()`
+- Use colored output for better UX (GREEN=success, RED=error, YELLOW=info/warning)
+
+### Documentation
+
+- **Docstrings**: Use for all functions/commands, brief and descriptive
+- **Comments**: Explain "why", not "what" (code should be self-documenting)
+- **README**: Update README.md when adding new tools with usage examples
+
+### File Handling
+
+- **Paths**: Use `pathlib.Path` instead of string manipulation
+- **Example**: `PAM_SUDO_PATH = Path("/etc/pam.d/sudo")`
+
+### Subprocess Usage
+
+- Use `subprocess.run()` with `check=True` for commands that should fail on error
+- Use `check=False` when failure is acceptable
+- Always provide user feedback about what's happening
+
+## Adding New Tools
+
+**IMPORTANT**: Use `uv` commands to create and manage scripts. Do NOT manually create scripts.
+
+### Creating a New Script
+
+```bash
+# Create a new script with uv (automatically sets up PEP 723 metadata)
+uv init --script example.py --python 3.14
+
+# Make it executable
+chmod +x example.py
+```
+
+### Adding Dependencies
+
+```bash
+# Add a dependency to a script (updates inline metadata)
+uv add --script example.py typer
+
+# Add a dependency with version constraint
+uv add --script example.py 'requests<3'
+
+# Add multiple dependencies
+uv add --script example.py typer 'requests<3' pydantic
+```
+
+### Workflow
+
+1. Create the script: `uv init --script tool_name.py --python 3.14`
+2. Add dependencies: `uv add --script tool_name.py typer`
+3. Make it executable: `chmod +x tool_name.py`
+4. Implement the tool following the code style guidelines above
+5. Update README.md with tool description and usage examples
+6. Test the tool: `uv run tool_name.py`
+
+## Environment
+
+- **Platform**: Linux (some tools may be distro-specific)
+- **Environment Variables**: Can be loaded from `.env` file (configured in `mise.toml`)
+- **Virtual Environments**: Managed automatically by `uv`
+
+## Git Workflow
+
+- Keep commits focused and atomic
+- Write clear commit messages
+- Update README.md and this file when adding significant features
