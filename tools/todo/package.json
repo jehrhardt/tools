@@ -1,0 +1,21 @@
+{
+  "name": "@tools/todo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "scripts": {
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@automerge/automerge-repo": "2.6.0-alpha.3",
+    "@automerge/automerge-repo-solid-primitives": "2.6.0-alpha.3",
+    "@tools/toolkit": "workspace:*",
+    "solid-js": "^1.9.19"
+  },
+  "devDependencies": {
+    "typescript": "~7.0.2"
+  }
+}

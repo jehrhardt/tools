@@ -4,24 +4,30 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
     "./rpc": "./src/rpc.ts"
   },
   "scripts": {
-    "dev": "wrangler dev",
-    "build": "wrangler deploy --dry-run --outdir dist",
-    "deploy": "wrangler deploy --minify",
+    "dev": "tsx watch src/index.ts",
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/index.js --external:@automerge/* --external:hono --external:@hono/* --external:ws",
+    "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@automerge/automerge-repo": "2.6.0-alpha.3",
+    "@automerge/automerge-repo-network-websocket": "2.6.0-alpha.3",
+    "@automerge/automerge-repo-storage-nodefs": "2.6.0-alpha.3",
+    "@hono/node-server": "2.1.8",
     "@tools/shared": "workspace:*",
-    "hono": "^4.13.18"
+    "hono": "^4.13.18",
+    "ws": "^8.23.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20261115.1",
+    "@types/node": "^26.6.6",
+    "@types/ws": "^8.18.1",
+    "esbuild": "^0.27.3",
+    "tsx": "^4.20.6",
     "typescript": "~7.0.2",
-    "vitest": "^5.1.0",
-    "wrangler": "^4.162.0"
+    "vitest": "^5.1.0"
   }
 }

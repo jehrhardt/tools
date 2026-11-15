@@ -3,8 +3,10 @@
 This project is a TypeScript monorepo managed with pnpm workspaces.
 
 - `apps/web` – SolidJS, Vite, Tailwind CSS, and daisyUI.
-- `apps/api` – Hono on Cloudflare Workers. The API is served by a Durable Object.
+- `apps/api` – Node.js Hono API with Automerge WebSocket sync and file-system storage.
 - `packages/shared` – Zod schemas and shared types.
+- `packages/toolkit` – shared tool contracts and Automerge document helpers.
+- `tools/*` – independently packaged tool UIs and document logic.
 
 ## Version Control
 

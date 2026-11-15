@@ -1,29 +1,54 @@
 # tools
 
-Miscellaneous tools to automate everyday tasks and experiment with ideas.
+A small collection of local-first tools for everyday work. The first tool is a
+Todo list that keeps working offline and synchronizes through Automerge when an
+API server is available.
 
-Inspired by this quote from [Simon Willison](https://simonwillison.net):
+## Architecture
 
-> "_This_ is why I care so much about the productivity boost I get from LLMs so
-> much: it’s not about getting work done faster, it’s about being able to ship
-> projects that I wouldn’t have been able to justify spending time on at all."
+This repository is a TypeScript monorepo managed with pnpm workspaces. The web
+app owns the user interface and a browser-side Automerge repository backed by
+IndexedDB. The Node.js API keeps a server-side repository backed by the file
+system and exposes the WebSocket sync endpoint.
 
-## Stack
+```mermaid
+flowchart LR
+  subgraph Browser["Web app (browser)"]
+    Tool["Tool UI + logic"]
+    Repo["Automerge Repo"]
+    IDB[("IndexedDB")]
+    Tool <--> Repo
+    Repo <--> IDB
+  end
+  subgraph Server["API (Node.js + Hono)"]
+    WS["/sync WebSocket"]
+    SRepo["Automerge Repo"]
+    FS[("File system")]
+    WS <--> SRepo
+    SRepo <--> FS
+  end
+  Repo <-->|WebSocket| WS
+```
 
-This is a TypeScript monorepo managed with pnpm workspaces.
+### Workspace packages
 
-- `apps/web` – SolidJS web UI built with Vite, Tailwind CSS, and daisyUI.
-- `apps/api` – Hono API deployed as a Cloudflare Worker. Requests are handled by
-  a Durable Object.
-- `packages/shared` – Zod schemas shared by the API and web UI. The web UI uses
-  the API's exported Hono RPC type for typed requests.
+- `apps/web` – SolidJS single-page app built with Vite, Tailwind CSS, and
+  DaisyUI.
+- `apps/api` – Node.js Hono API with Automerge WebSocket synchronization and
+  file-system document storage.
+- `packages/shared` – shared Zod schemas and types.
+- `packages/toolkit` – the tool contract and helpers for persistent Automerge
+  document URLs.
+- `tools/todo` – the first tool, a local-first Todo list.
 
-## Requirements
+The pnpm workspace includes `apps/*`, `packages/*`, and `tools/*`.
 
-- Node.js LTS or newer
+## Requirements and setup
+
+- Node.js 22 or newer
 - pnpm 12 or newer
 
-## Setup
+Install dependencies with:
 
 ```bash
 pnpm install
@@ -31,38 +56,74 @@ pnpm install
 
 ## Development
 
-Start the API and web UI together:
+Start the API and web app together:
 
 ```bash
 pnpm dev
 ```
 
-- Web UI: `http://localhost:5173`
-- API: `http://127.0.0.1:8787`
+By default:
 
-Set `TOOLS_API_URL` to proxy the web UI to a different API address, for example:
+- Web app: <http://127.0.0.1:5173>
+- API: <http://127.0.0.1:8787>
+- API document data: `./automerge-repo-data`
+
+The API reads `TOOLS_DATA_DIR` for its Automerge file-system storage location:
+
+```bash
+TOOLS_DATA_DIR=/tmp/tools-data pnpm --filter @tools/api dev
+```
+
+The Vite development server proxies `/info` and the `/sync` WebSocket to
+`http://127.0.0.1:8787` by default. Set `TOOLS_API_URL` when the API is hosted
+elsewhere:
 
 ```bash
 TOOLS_API_URL=http://127.0.0.1:8788 pnpm --filter @tools/web dev
 ```
 
-## API
+## Web routes and API
 
-The API exposes `GET /info`, which responds with:
+The web app provides these routes:
 
-```json
-{ "status": "OK" }
-```
+- `/` – the tool index.
+- `/:toolId` – the page for a tool, such as `/todo`.
 
-## Testing
+The API provides:
 
-Run all tests from the project root:
+- `GET /info` – health/status response: `{ "status": "OK" }`.
+- `GET /sync` – Automerge WebSocket synchronization endpoint.
+
+Documents are stored in the browser's IndexedDB and synchronized with the API
+when a peer is available. A tool's document can be shared with a `?doc=` URL
+parameter.
+
+## Adding a tool
+
+1. Create a package under `tools/<tool-id>` with a SolidJS component and an
+   Automerge document type. Follow `tools/todo` as the reference implementation.
+   The `tools/*` workspace is included in Tailwind's source scan, so classes in
+   future tools are discovered automatically.
+2. Add the package's `package.json` and `tsconfig.json`, exporting a tool
+   definition with `defineTool` from `@tools/toolkit`.
+3. Use `useRepo`, `useDocument`, and `ensureToolDocument` so the tool's document
+   is persisted locally and can be shared with a `?doc=` link.
+4. Register the exported tool in `apps/web/src/tools.ts`.
+5. Use DaisyUI components and keep all document mutations inside the Automerge
+   handle's `change` callback.
+
+## Verification
+
+Run the complete verification suite from the repository root:
 
 ```bash
+pnpm fmt
+pnpm lint
+pnpm build
 pnpm test
 ```
 
-Install the Playwright browser once after cloning:
+Install Chromium once if browser tests have not been set up yet:
 
 ```bash
 pnpm --filter @tools/web exec playwright install chromium

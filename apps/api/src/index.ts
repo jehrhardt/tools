@@ -1,12 +1,18 @@
-import type { Env } from "./env";
+import { startServer } from "./server";
 
-export { ToolsDurableObject } from "./durable-object";
-export type { AppType } from "./app";
+const port = Number(process.env.PORT ?? "8787");
+const dataDir = process.env.TOOLS_DATA_DIR ?? "./automerge-repo-data";
+const server = await startServer({ port, dataDir });
 
-export default {
-  fetch(request, env) {
-    const id = env.TOOLS_DURABLE_OBJECT.idFromName("tools");
-    const stub = env.TOOLS_DURABLE_OBJECT.get(id);
-    return stub.fetch(request);
-  },
-} satisfies ExportedHandler<Env>;
+console.log(`Tools API listening on http://127.0.0.1:${server.port}`);
+
+let shuttingDown = false;
+const shutdown = async () => {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  await server.close();
+  process.exit(0);
+};
+
+process.once("SIGINT", shutdown);
+process.once("SIGTERM", shutdown);

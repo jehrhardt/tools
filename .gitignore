@@ -7,10 +7,6 @@ dist/
 dist-ssr/
 *.local
 
-# Cloudflare
-.wrangler/
-.dev.vars
-
 # Environment
 .env
 .env.*
@@ -43,3 +39,9 @@ lerna-debug.log*
 # Backup files
 *.bak
 *~
+
+# Automerge server data
+automerge-repo-data/
+
+# Verification artifacts
+artifacts/
