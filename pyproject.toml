@@ -3,7 +3,12 @@ name = "tools"
 version = "0.1.0"
 description = "Miscellaneous Python tools to automate everyday tasks and experiment with ideas"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "fastapi>=0.163.0",
+    "pydantic>=2.14.3",
+    "typer>=0.29.1",
+    "uvicorn[standard]>=0.54.0",
+]
 
 [project.scripts]
 tools = "tools:main"
