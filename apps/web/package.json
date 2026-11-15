@@ -18,7 +18,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.5",
     "@tools/api": "workspace:*",
-    "@types/node": "^24.19.2",
+    "@types/node": "^26.6.6",
     "@vitest/browser-playwright": "^5.1.0",
     "daisyui": "^5.8.0",
     "playwright": "^1.65.1",
