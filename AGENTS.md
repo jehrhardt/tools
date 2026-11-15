@@ -32,5 +32,14 @@ Before committing changes, run the following from the project root.
    pnpm build
    ```
 
-All errors and warnings reported by `oxlint` or the build MUST be fixed before
-committing.
+4. Run the automated tests:
+
+   ```bash
+   pnpm test
+   ```
+
+   The web browser tests need Chromium. Install it once with
+   `pnpm --filter @tools/web exec playwright install chromium`.
+
+All errors and warnings reported by `oxlint` or the build, as well as any
+failing test, MUST be fixed before committing.

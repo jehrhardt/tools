@@ -53,3 +53,29 @@ The API exposes `GET /info`, which responds with:
 ```json
 { "status": "OK" }
 ```
+
+## Testing
+
+Run all tests from the project root:
+
+```bash
+pnpm test
+```
+
+- `apps/api` – Vitest integration tests covering the worker entry point, routing,
+  and response schemas.
+- `apps/web` – Vitest browser tests running in headless Chromium through
+  Playwright. The API is started with `wrangler dev` for the tests unless it is
+  already reachable at `TOOLS_API_URL` (default `http://127.0.0.1:8787`).
+
+Install the Playwright browser once after cloning:
+
+```bash
+pnpm --filter @tools/web exec playwright install chromium
+```
+
+## Continuous integration
+
+GitHub Actions runs the format check (`oxfmt`), the linter (`oxlint`), and the
+full test suite on every push to `main` and on every pull request. Dependabot
+checks for dependency updates weekly.

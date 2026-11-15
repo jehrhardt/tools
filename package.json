@@ -9,7 +9,8 @@
     "lint": "oxlint",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
-    "check": "pnpm lint && pnpm fmt:check"
+    "test": "pnpm -r --if-present test",
+    "check": "pnpm lint && pnpm fmt:check && pnpm test"
   },
   "devDependencies": {
     "oxfmt": "^0.78.0",

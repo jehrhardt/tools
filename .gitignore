@@ -16,6 +16,10 @@ dist-ssr/
 .env.*
 !.env.example
 
+# Tests
+.vitest/
+coverage/
+
 # Logs
 logs/
 *.log
