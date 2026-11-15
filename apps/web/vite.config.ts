@@ -1,12 +1,12 @@
 import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import solid from "vite-plugin-solid";
 
-const apiUrl = process.env.TOOLS_API_URL ?? "http://127.0.0.10:8000";
+const apiUrl = process.env.TOOLS_API_URL ?? "http://127.0.0.1:8787";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [solid(), tailwindcss()],
   server: {
     proxy: {
       "/info": apiUrl,

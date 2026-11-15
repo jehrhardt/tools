@@ -1,0 +1,7 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "oxc", "jsx-a11y", "import", "promise"],
+  "options": {
+    "typeAware": true
+  }
+}

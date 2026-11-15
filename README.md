@@ -1,35 +1,55 @@
 # tools
 
-Miscellaneous Python tools to automate everyday tasks and experiment with ideas.
+Miscellaneous tools to automate everyday tasks and experiment with ideas.
 
 Inspired by this quote from [Simon Willison](https://simonwillison.net):
 
-> "*This* is why I care so much about the productivity boost I get from LLMs so
+> "_This_ is why I care so much about the productivity boost I get from LLMs so
 > much: it’s not about getting work done faster, it’s about being able to ship
 > projects that I wouldn’t have been able to justify spending time on at all."
 
-## Usage
+## Stack
 
-Start the API (defaults to `http://127.0.0.10:8000`):
+This is a TypeScript monorepo managed with pnpm workspaces.
+
+- `apps/web` – SolidJS web UI built with Vite, Tailwind CSS, and daisyUI.
+- `apps/api` – Hono API deployed as a Cloudflare Worker. Requests are handled by
+  a Durable Object.
+- `packages/shared` – Zod schemas shared by the API and web UI. The web UI uses
+  the API's exported Hono RPC type for typed requests.
+
+## Requirements
+
+- Node.js LTS or newer
+- pnpm 12 or newer
+
+## Setup
 
 ```bash
-uv run tools serve --port 8000 --bind 127.0.0.10
+pnpm install
 ```
+
+## Development
+
+Start the API and web UI together:
+
+```bash
+pnpm dev
+```
+
+- Web UI: `http://localhost:5173`
+- API: `http://127.0.0.1:8787`
+
+Set `TOOLS_API_URL` to proxy the web UI to a different API address, for example:
+
+```bash
+TOOLS_API_URL=http://127.0.0.1:8788 pnpm --filter @tools/web dev
+```
+
+## API
 
 The API exposes `GET /info`, which responds with:
 
 ```json
 { "status": "OK" }
 ```
-
-Start the web UI in a second terminal:
-
-```bash
-cd web
-pnpm install
-pnpm dev
-```
-
-The dev server proxies `/info` to `http://127.0.0.10:8000`. Set `TOOLS_API_URL` to
-point it at a different API address, for example when using a custom `--bind` or
-`--port`.

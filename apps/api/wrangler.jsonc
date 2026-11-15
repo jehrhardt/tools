@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tools-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-15",
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "TOOLS_DURABLE_OBJECT",
+        "class_name": "ToolsDurableObject",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["ToolsDurableObject"],
+    },
+  ],
+  "dev": {
+    "port": 8787,
+  },
+}
