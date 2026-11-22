@@ -197,8 +197,8 @@ importers:
         specifier: 2.6.0-alpha.3
         version: 2.6.0-alpha.3(supports-color@10.2.2)
       '@hono/node-server':
-        specifier: 2.1.8
-        version: 2.1.8(hono@4.13.18)
+        specifier: 2.1.9
+        version: 2.1.9(hono@4.13.18)
       '@tools/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -641,8 +641,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@hono/node-server@2.1.8':
-    resolution: {integrity: sha512-jdf7FHh6A1lzjpHHQUgxsg2GeER2vMetnAOfeActzcoli6jamlK+NAwL6Dsr5Fl3BS3tYUQzCdtZjU8Qxv7bEA==}
+  '@hono/node-server@2.1.9':
+    resolution: {integrity: sha512-Sk4NQd3GFY0WZWCzndwFMPwJhtD0y9qjsQ+pjID0/03nK9pxyBCUoUHCho8QYBLBVhi0ssL8UkNPHqbgSOFPIQ==}
     engines: {node: '>=20'}
     peerDependencies:
       hono: ^4 || ^5.0.0-0
@@ -2204,7 +2204,7 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@hono/node-server@2.1.8(hono@4.13.18)':
+  '@hono/node-server@2.1.9(hono@4.13.18)':
     dependencies:
       hono: 4.13.18
 
